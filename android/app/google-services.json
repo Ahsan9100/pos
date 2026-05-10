@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "428427627479",
+    "project_id": "posproject-fb2ff",
+    "storage_bucket": "posproject-fb2ff.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428427627479:android:70266862b9fd65cd581992",
+        "android_client_info": {
+          "package_name": "com.example.pos_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLhhN8-DgtDSFOnUe3kQ00w1dKZvz3BuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
