@@ -11,12 +11,16 @@ class SalesHistoryProvider extends ChangeNotifier {
   String _searchQuery = '';
   DateTime _startDate = DateTime.now().subtract(const Duration(days: 30));
   DateTime _endDate = DateTime.now();
+  DateTime? _selectedStartDate;
+  DateTime? _selectedEndDate;
   bool _isFiltered = false;
 
   List<SaleModel> get allSales => _allSales;
   String get searchQuery => _searchQuery;
   DateTime get startDate => _startDate;
   DateTime get endDate => _endDate;
+  DateTime? get selectedStartDate => _selectedStartDate;
+  DateTime? get selectedEndDate => _selectedEndDate;
   bool get isFiltered => _isFiltered;
 
   List<SaleModel> get filteredSales {
@@ -63,12 +67,21 @@ class SalesHistoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Set date range for filtering
+  // Set date range (without applying filter yet)
   void setDateRange(DateTime startDate, DateTime endDate) {
-    _startDate = startDate;
-    _endDate = endDate;
-    _isFiltered = true;
+    _selectedStartDate = startDate;
+    _selectedEndDate = endDate;
     notifyListeners();
+  }
+
+  // Apply the date range filter
+  void applyDateFilter() {
+    if (_selectedStartDate != null && _selectedEndDate != null) {
+      _startDate = _selectedStartDate!;
+      _endDate = _selectedEndDate!;
+      _isFiltered = true;
+      notifyListeners();
+    }
   }
 
   // Clear date filter
@@ -76,6 +89,8 @@ class SalesHistoryProvider extends ChangeNotifier {
     _isFiltered = false;
     _startDate = DateTime.now().subtract(const Duration(days: 30));
     _endDate = DateTime.now();
+    _selectedStartDate = null;
+    _selectedEndDate = null;
     notifyListeners();
   }
 

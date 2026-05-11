@@ -32,13 +32,19 @@ class _SalesHistoryFiltersState extends State<SalesHistoryFilters> {
 
   void _updateControllers() {
     final provider = context.read<SalesHistoryProvider>();
-    _startDateCtrl.text = DateFormat('dd/MM/yyyy').format(provider.startDate);
-    _endDateCtrl.text = DateFormat('dd/MM/yyyy').format(provider.endDate);
+    // Show selected dates if available, otherwise show applied dates
+    final startDate = provider.selectedStartDate ?? provider.startDate;
+    final endDate = provider.selectedEndDate ?? provider.endDate;
+    _startDateCtrl.text = DateFormat('dd/MM/yyyy').format(startDate);
+    _endDateCtrl.text = DateFormat('dd/MM/yyyy').format(endDate);
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final provider = context.read<SalesHistoryProvider>();
-    final initialDate = isStartDate ? provider.startDate : provider.endDate;
+    // Use selected date if available, otherwise use applied date
+    final currentStartDate = provider.selectedStartDate ?? provider.startDate;
+    final currentEndDate = provider.selectedEndDate ?? provider.endDate;
+    final initialDate = isStartDate ? currentStartDate : currentEndDate;
 
     final picked = await showDatePicker(
       context: context,
@@ -61,8 +67,8 @@ class _SalesHistoryFiltersState extends State<SalesHistoryFilters> {
 
     if (picked != null && mounted) {
       if (isStartDate) {
-        if (picked.isBefore(provider.endDate)) {
-          context.read<SalesHistoryProvider>().setDateRange(picked, provider.endDate);
+        if (picked.isBefore(currentEndDate)) {
+          context.read<SalesHistoryProvider>().setDateRange(picked, currentEndDate);
           _updateControllers();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -75,8 +81,8 @@ class _SalesHistoryFiltersState extends State<SalesHistoryFilters> {
           );
         }
       } else {
-        if (picked.isAfter(provider.startDate)) {
-          context.read<SalesHistoryProvider>().setDateRange(provider.startDate, picked);
+        if (picked.isAfter(currentStartDate)) {
+          context.read<SalesHistoryProvider>().setDateRange(currentStartDate, picked);
           _updateControllers();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -168,6 +174,57 @@ class _SalesHistoryFiltersState extends State<SalesHistoryFilters> {
                       onTap: () => _selectDate(context, false),
                     ),
                   ),
+                  const SizedBox(width: 12),
+                  if (!salesProvider.isFiltered)
+                    Tooltip(
+                      message: 'Apply date range filter',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF2D5BFF), Color(0xFF1E40AF)],
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF2D5BFF).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              salesProvider.applyDateFilter();
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.search_rounded,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    'Search',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   if (salesProvider.isFiltered) ...[
                     const SizedBox(width: 12),
                     Tooltip(
