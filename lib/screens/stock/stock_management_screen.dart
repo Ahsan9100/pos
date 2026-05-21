@@ -107,61 +107,86 @@ class _StockManagementScreenState extends State<StockManagementScreen> with Sing
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            leading: CircleAvatar(
-              backgroundColor: isLowStock ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1),
-              child: Icon(
-                isLowStock ? Icons.warning_amber_rounded : Icons.check_circle_outline,
-                color: isLowStock ? Colors.red : Colors.green,
-              ),
-            ),
-            title: Text(
-              product.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                const SizedBox(height: 4),
-                Text('Category: ${product.category}'),
-                Text('Barcode: ${product.barcode}'),
-                if (isLowStock)
-                  Text(
-                    'Low Stock Threshold: ${product.lowStockThreshold}',
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-              ],
-            ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'QTY: ${product.stockQuantity}',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isLowStock ? Colors.red : Colors.black87,
+                CircleAvatar(
+                  backgroundColor: isLowStock ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                  child: Icon(
+                    isLowStock ? Icons.warning_amber_rounded : Icons.check_circle_outline,
+                    color: isLowStock ? Colors.red : Colors.green,
                   ),
                 ),
-                const SizedBox(height: 4),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => StockAdjustmentDialog(
-                        product: product,
-                        userId: user?.uid ?? 'system',
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Adjust'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    minimumSize: Size.zero,
+                      const SizedBox(height: 4),
+                      Text('Category: ${product.category}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      Text('Barcode: ${product.barcode}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      if (isLowStock)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            'Low Stock: ${product.lowStockThreshold}',
+                            style: const TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                    ],
                   ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'QTY: ${product.stockQuantity}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isLowStock ? Colors.red : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Tooltip(
+                      message: 'Adjust Stock',
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => StockAdjustmentDialog(
+                                product: product,
+                                userId: user?.uid ?? 'system',
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2D5BFF).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: const Color(0xFF2D5BFF).withOpacity(0.2)),
+                            ),
+                            child: const Icon(
+                              Icons.edit_rounded,
+                              size: 16,
+                              color: Color(0xFF2D5BFF),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
